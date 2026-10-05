@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的網頁程式作品集 | Portfolio</title>
+    <style>
+        /* 1. 全局樣式與變數設定 */
+        :root {
+            --bg-color: #0d1b2a;
+            --card-bg: #1b263b;
+            --card-border: #415a77;
+            --accent-blue: #00b4d8;
+            --bright-blue: #90e0ef;
+            --text-main: #e0e1dd;
+            --text-muted: #778da9;
+            --locked-bg: rgba(27, 38, 59, 0.4);
+            --locked-border: rgba(65, 90, 119, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 180, 216, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(144, 224, 239, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* 2. 萌萌的頭像與名字小天地 */
+        .profile-section {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--bright-blue));
+            box-shadow: 0 0 25px rgba(0, 180, 216, 0.5);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .avatar-wrapper:hover {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 0 35px rgba(0, 180, 216, 0.8);
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--bg-color);
+            background-color: #2b3a4e;
+        }
+
+        .profile-name {
+            margin-top: 15px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+        }
+
+        .profile-subtitle {
+            font-size: 0.95rem;
+            color: var(--accent-blue);
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* 3. Bố cục lưới ô xinh xắn cho các nút bấm ~ 🌸 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 電腦版每行 4 個 */
+            gap: 20px;
+            width: 100%;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        /* 4. 按鈕基礎與酷炫 Hover 動畫 */
+        .btn-card {
+            text-decoration: none;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 22px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(5px);
+            min-height: 110px;
+        }
+
+        /* 解鎖的按鈕特效 */
+        .btn-card.unlocked {
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-card.unlocked::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.15), 
+                transparent
+            );
+            transition: 0.6s;
+        }
+
+        .btn-card.unlocked:hover::before {
+            left: 100%;
+        }
+
+        .btn-card.unlocked:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 25px rgba(0, 180, 216, 0.4),
+                        0 0 15px rgba(0, 180, 216, 0.2);
+            background: linear-gradient(145deg, #1e2d42, #152238);
+        }
+
+        .btn-card.unlocked .badge {
+            background-color: rgba(0, 180, 216, 0.2);
+            color: var(--bright-blue);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-card.unlocked .title {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* 5. 未解鎖按鈕 (灰色遊戲闖關風格) */
+        .btn-card.locked {
+            background: var(--locked-bg);
+            border: 1px border-dashed var(--locked-border);
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .btn-card.locked:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+            opacity: 0.8;
+        }
+
+        .btn-card.locked .badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-card.locked .title {
+            color: var(--text-muted);
+        }
+
+        .lock-icon {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        /* 內容元件細節 */
+        .badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .title {
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        /* 6. 動畫關鍵影格 (Keyframes) */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 7. 響應式微調 (RWD 網頁手持裝置適應) */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr); /* 平板: 每行 3 個 */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr); /* 手機: 每行 2 個 */
+                gap: 12px;
+            }
+            
+            .btn-card {
+                padding: 16px 10px;
+                min-height: 95px;
+            }
+
+            .title {
+                font-size: 0.85rem;
+            }
+            
+            .profile-name {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. 中央個人資訊區塊 -->
+        <section class="profile-section">
+            <div class="avatar-wrapper">
+                <!-- 預設假圖片，可自行替換成你的大頭貼檔名 -->
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=WebDev" alt="大頭貼" class="avatar">
+            </div>
+            <h1 class="profile-name">to uyen</h1>
+            <p class="profile-subtitle">Web Programming Portfolio</p>
+        </section>
+
+        <!-- 2. 16個任務關卡按鈕區塊 -->
+        <main class="grid-container">
+            
+            <!-- 已解鎖按鈕 1 -->
+            <a href="w1/index.html" class="btn-card unlocked">
+                <span class="badge">MISSION 01</span>
+                <span class="title">Week1-數位名片</span>
+            </a>
+
+            <!-- 已解鎖按鈕 2 -->
+            <a href="w2/index.html" class="btn-card unlocked">
+                <span class="badge">MISSION 02</span>
+                <span class="title">Week 2-今天吃甚麼?</span>
+            </a>
+
+            <!-- 未解鎖按鈕 03 ~ 16 -->
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 03</span>
+                <span class="title">Week 3 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 04</span>
+                <span class="title">Week 4 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 05</span>
+                <span class="title">Week 5 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 06</span>
+                <span class="title">Week 6 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 07</span>
+                <span class="title">Week 7 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 08</span>
+                <span class="title">Week 8 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 09</span>
+                <span class="title">Week 9 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 10</span>
+                <span class="title">Week 10 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 11</span>
+                <span class="title">Week 11 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 12</span>
+                <span class="title">Week 12 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 13</span>
+                <span class="title">Week 13 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 14</span>
+                <span class="title">Week 14 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 15</span>
+                <span class="title">Week 15 - 未解鎖</span>
+            </a>
+
+            <a href="javascript:void(0)" class="btn-card locked">
+                <span class="lock-icon">🔒</span>
+                <span class="badge">MISSION 16</span>
+                <span class="title">Week 16 - 未解鎖</span>
+            </a>
+
+        </main>
+    </div>
+
+</body>
+</html>
+    <script src="./script.js"></script>
+  </body>
+</html>
