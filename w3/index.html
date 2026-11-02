@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定義迷因 (Meme) 產生器</title>
+    
+    <!-- 引入 Google Fonts (Noto Sans TC) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- 引入 html2canvas CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 主容器：電腦版左右分欄，手機版上下分欄 (RWD) */
+        .app-container {
+            display: flex;
+            flex-direction: row;
+            background-color: #2a2a2a;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 1000px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* 左側/上方控制面板 */
+        .controls-panel {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #222222;
+        }
+
+        .controls-panel h1 {
+            font-size: 1.8rem;
+            color: #00ffcc;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.95rem;
+            color: #dddddd;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="text"], input[type="file"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="range"] {
+            accent-color: #00ffcc;
+            cursor: pointer;
+        }
+
+        /* 下載按鈕 */
+        .download-btn {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00ffcc, #0099ff);
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+        }
+
+        /* 右側/下方即時預覽區 */
+        .preview-panel {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #181818;
+        }
+
+        .meme-box {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .meme-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* 迷因文字 (黑色粗邊框 text-shadow) */
+        .meme-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            color: white;
+            font-weight: 900;
+            word-wrap: break-word;
+            line-height: 1.2;
+            text-transform: uppercase;
+            text-shadow: 
+                -2px -2px 0 #000,  
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000,
+                -3px  0px 0 #000,
+                 3px  0px 0 #000,
+                 0px -3px 0 #000,
+                 0px  3px 0 #000;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .top-text { top: 20px; }
+        .bottom-text { bottom: 20px; }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 控制面板區 -->
+        <div class="controls-panel">
+            <h1>迷因產生器</h1>
+
+            <!-- 1. 圖片上傳 (避免 CORS 錯誤) -->
+            <div class="form-group">
+                <label for="imageUpload">1. 選擇背景圖片</label>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+
+            <!-- 2. 雙層文字輸入 -->
+            <div class="form-group">
+                <label for="topTextInput">2. 上方文字</label>
+                <input type="text" id="topTextInput" placeholder="輸入上方文字...">
+            </div>
+
+            <div class="form-group">
+                <label for="bottomTextInput">3. 下方文字</label>
+                <input type="text" id="bottomTextInput" placeholder="輸入下方文字...">
+            </div>
+
+            <!-- 3. 參數滑桿控制 -->
+            <div class="form-group">
+                <label>4. 字體大小 <span id="fontSizeVal">32px</span></label>
+                <input type="range" id="fontSizeSlider" min="16" max="64" value="32">
+            </div>
+
+            <div class="form-group">
+                <label>5. 上方文字垂直位置 <span id="topPosVal">20px</span></label>
+                <input type="range" id="topPosSlider" min="0" max="150" value="20">
+            </div>
+
+            <div class="form-group">
+                <label>6. 下方文字垂直位置 <span id="bottomPosVal">20px</span></label>
+                <input type="range" id="bottomPosSlider" min="0" max="150" value="20">
+            </div>
+
+            <!-- 4. 一鍵下載按鈕 -->
+            <button class="download-btn" id="downloadBtn">🚀 一鍵下載迷因 (my-meme.png)</button>
+        </div>
+
+        <!-- 即時預覽區 -->
+        <div class="preview-panel">
+            <div class="meme-box" id="memeContainer">
+                <img id="memeImage" src="https://i.postimg.cc/52gMwYD9/images.jpg" alt="Meme Background">
+                <div class="meme-text top-text" id="topTextDisplay">上方文字預覽</div>
+                <div class="meme-text bottom-text" id="bottomTextDisplay">下方文字預覽</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const memeImage = document.getElementById('memeImage');
+        
+        const topTextInput = document.getElementById('topTextInput');
+        const bottomTextInput = document.getElementById('bottomTextInput');
+        const topTextDisplay = document.getElementById('topTextDisplay');
+        const bottomTextDisplay = document.getElementById('bottomTextDisplay');
+
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const topPosSlider = document.getElementById('topPosSlider');
+        const bottomPosSlider = document.getElementById('bottomPosSlider');
+
+        const fontSizeVal = document.getElementById('fontSizeVal');
+        const topPosVal = document.getElementById('topPosVal');
+        const bottomPosVal = document.getElementById('bottomPosVal');
+
+        const downloadBtn = document.getElementById('downloadBtn');
+        const memeContainer = document.getElementById('memeContainer');
+
+        /* 1. 本機圖片上傳 (使用 FileReader 避免 CORS 錯誤) */
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    memeImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        /* 2. 文字即時同步 */
+        topTextInput.addEventListener('input', function() {
+            topTextDisplay.innerText = this.value || '上方文字預覽';
+        });
+
+        bottomTextInput.addEventListener('input', function() {
+            bottomTextDisplay.innerText = this.value || '下方文字預覽';
+        });
+
+        /* 3. 滑桿控制字體大小與位置 */
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value + 'px';
+            topTextDisplay.style.fontSize = size;
+            bottomTextDisplay.style.fontSize = size;
+            fontSizeVal.innerText = size;
+        });
+
+        topPosSlider.addEventListener('input', function() {
+            const pos = this.value + 'px';
+            topTextDisplay.style.top = pos;
+            topPosVal.innerText = pos;
+        });
+
+        bottomPosSlider.addEventListener('input', function() {
+            const pos = this.value + 'px';
+            bottomTextDisplay.style.bottom = pos;
+            bottomPosVal.innerText = pos;
+        });
+
+        /* 4. 一鍵截圖下載 (html2canvas) */
+        downloadBtn.addEventListener('click', function() {
+            html2canvas(memeContainer, {
+                useCORS: true,
+                scale: 2
+            }).then(function(canvas) {
+                const imageUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imageUrl;
+                downloadLink.download = 'my-meme.png';
+                
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+        });
+    </script>
+</body>
+</html>
