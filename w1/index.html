@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人數位名片</title>
+  <style>
+    /* 1. 重設基礎樣式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 2. 背景與整體居中設置 */
+    body {
+      font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* 3. 名片卡片主體 */
+    .card {
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 360px;
+      padding: 32px 24px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    /* 滑鼠懸停時微升效果 */
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* 4. 頭像照片 */
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 5. 文字內容 */
+    .name {
+      font-size: 24px;
+      color: #2c3e50;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: 14px;
+      color: #7f8c8d;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .bio {
+      font-size: 14px;
+      color: #555555;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* 6. 社群與聯絡按鈕清單 */
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      display: block;
+      padding: 12px;
+      border-radius: 10px;
+      background-color: #4a90e2;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    /* 按鈕滑鼠懸停與點擊效果 */
+    .btn:hover {
+      background-color: #357abd;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 第二種顏色的按鈕範例 */
+    .btn-secondary {
+      background-color: #f39c12;
+    }
+
+    .btn-secondary:hover {
+      background-color: #d68910;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 名片主體開始 -->
+  <div class="card">
+    <!-- 大頭照：可換成你自己的圖片網址 -->
+    <img class="avatar" src="https://i.postimg.cc/52gMwYD9/images.jpg" alt="個人頭像">
+    
+    <!-- 基本資料 -->
+    <h1 class="name">to uyen</h1>
+    <p class="title">UI/UX 設計新手 / 新銳創作者</p>
+    <p class="bio">熱愛美感與簡約設計，正在學習網頁前端與視覺設計。喜歡探索生活中的微小美感。</p>
+
+    <!-- 連結按鈕區 -->
+    <div class="links">
+      <a href="touyn111" target="_blank" class="btn">Instagram </a>
+      <a href="s26211171@stu.edu.tw" class="btn btn-secondary">發送 Email 聯絡我</a>
+    </div>
+  </div>
+  <!-- 名片主體結束 -->
+
+</body>
+</html>
